@@ -5,13 +5,37 @@ function SearchBar() {
     const [searchQuery, setSearchQuery] = useState('');
     const [searchSuggestions, setSearchSuggestions] = useState([]);
     useEffect(() => {
-        getSuggestions();
+
+        // Adding Debouncing technique to improve performance by reducing API calls on keystrokes
+        const timer = setTimeout(() => {
+            getSuggestions();
+        }, 200);
+
+        return () => {
+            clearTimeout(timer);
+        }
     }, [searchQuery]);
 
+    /*
+    * 
+    * key pressed 'i' in search box
+    * - render the component
+    * - useEffect();
+    * - start timer => make api call after 200ms
+    * 
+    * key pressed "p" in search box
+    * - destroy the component( it will call useEffect return method)
+    * - render the component
+    * - useEffect()
+    * - start timer -> make api call after 200 ms (it is a new timer)
+
+    */
+
     const getSuggestions = async () => {
+        console.log("API CAll= ", searchQuery);
         const data = await fetch(YOUTUBE_SEARCH_API + searchQuery);
         const json = await data.json();
-        // console.log(json[1]);
+        
         setSearchSuggestions(json[1]);
     }
     return (
