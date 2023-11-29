@@ -1,14 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { YOUTUBE_SEARCH_API } from '../utils/constant';
+import { useDispatch, useSelector } from "react-redux";
+import { cacheResults } from '../utils/searchSlice';
 
 function SearchBar() {
     const [searchQuery, setSearchQuery] = useState('');
     const [searchSuggestions, setSearchSuggestions] = useState([]);
+
+    const dispatch = useDispatch();
+    const searchCache = useSelector((store) => store.search);
+
     useEffect(() => {
 
         // Adding Debouncing technique to improve performance by reducing API calls on keystrokes
         const timer = setTimeout(() => {
-            getSuggestions();
+            if (searchCache[searchQuery]) {
+                setSearchSuggestions(searchCache[searchQuery])
+            } else {
+                getSuggestions();
+            }
         }, 200);
 
         return () => {
@@ -37,6 +47,11 @@ function SearchBar() {
         const json = await data.json();
         
         setSearchSuggestions(json[1]);
+
+        // Adding search suggestions to the cache
+        dispatch(cacheResults({
+            [searchQuery]: json[1]
+        }));
     }
     return (
         <div className='search-container'>
