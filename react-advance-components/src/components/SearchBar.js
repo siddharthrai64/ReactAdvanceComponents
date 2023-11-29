@@ -57,12 +57,12 @@ function SearchBar() {
         <div className='search-container'>
             <div className='search-wrapper'>
                 <label htmlFor='search-bar'>Search</label>
-                <input type='text' id='search-bar' value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+                <input className="w-1/2 border border-gray-400 p-2 rounded-s-full" type='text' id='search-bar' value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
             </div> 
             <div className='search-suggestion-container'>
                 <div className='search-suggestion-wrapper'>
                     <ul>
-                        {searchSuggestions.map((suggestion) => <li key={suggestion}>{suggestion}</li>)}
+                        {searchSuggestions.map((suggestion) => <li className="px-4 py-2 shadow-sm hover:bg-gray-100" key={suggestion}>{suggestion}</li>)}
                     </ul>
                 </div>
             </div>
