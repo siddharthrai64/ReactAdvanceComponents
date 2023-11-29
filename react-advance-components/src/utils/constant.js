@@ -1,0 +1,1 @@
+export const YOUTUBE_SEARCH_API = "https://cors-anywhere.herokuapp.com/https://suggestqueries.google.com/complete/search?client=firefox&ds=yt&q=";
