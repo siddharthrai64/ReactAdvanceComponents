@@ -1,14 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { YOUTUBE_SEARCH_API } from '../utils/constant';
+import { useDispatch, useSelector } from "react-redux";
+import { cacheResults } from '../utils/searchSlice';
 
 function SearchBar() {
     const [searchQuery, setSearchQuery] = useState('');
     const [searchSuggestions, setSearchSuggestions] = useState([]);
+
+    const dispatch = useDispatch();
+    const searchCache = useSelector((store) => store.search);
+
     useEffect(() => {
 
         // Adding Debouncing technique to improve performance by reducing API calls on keystrokes
         const timer = setTimeout(() => {
-            getSuggestions();
+            if (searchCache[searchQuery]) {
+                setSearchSuggestions(searchCache[searchQuery])
+            } else {
+                getSuggestions();
+            }
         }, 200);
 
         return () => {
@@ -37,17 +47,22 @@ function SearchBar() {
         const json = await data.json();
         
         setSearchSuggestions(json[1]);
+
+        // Adding search suggestions to the cache
+        dispatch(cacheResults({
+            [searchQuery]: json[1]
+        }));
     }
     return (
         <div className='search-container'>
             <div className='search-wrapper'>
                 <label htmlFor='search-bar'>Search</label>
-                <input type='text' id='search-bar' value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+                <input className="w-1/2 border border-gray-400 p-2 rounded-s-full" type='text' id='search-bar' value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
             </div> 
             <div className='search-suggestion-container'>
                 <div className='search-suggestion-wrapper'>
                     <ul>
-                        {searchSuggestions.map((suggestion) => <li key={suggestion}>{suggestion}</li>)}
+                        {searchSuggestions.map((suggestion) => <li className="px-4 py-2 shadow-sm hover:bg-gray-100" key={suggestion}>{suggestion}</li>)}
                     </ul>
                 </div>
             </div>
